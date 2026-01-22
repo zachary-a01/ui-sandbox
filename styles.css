@@ -13,45 +13,45 @@
   --nextEnabled: rgb(0,128,0);
 }
 
-/* --- Global iOS / PWA behavior --- */
-html {
-  -webkit-text-size-adjust: 100%;
-}
-
+/* ====== GLOBAL: make the app feel native on iOS ====== */
 html, body {
+  height: 100%;
   margin: 0;
   padding: 0;
+
   background: var(--bg);
   color: var(--fg);
   font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
 
-  /* Helps reduce iOS double-tap zoom on tappables */
-  touch-action: manipulation;
+  /* Stop the whole page from scrolling/bouncing */
+  overflow: hidden;
 
-  /* Prevent text selection / callout */
+  /* Reduce gesture weirdness */
+  -webkit-text-size-adjust: 100%;
+  -webkit-touch-callout: none;
   -webkit-user-select: none;
   user-select: none;
-  -webkit-touch-callout: none;
 }
 
 #app {
+  height: 100%;
+  box-sizing: border-box;
+
+  /* safe areas */
   padding-top: calc(env(safe-area-inset-top) + 18px);
   padding-left: calc(env(safe-area-inset-left) + 18px);
   padding-right: calc(env(safe-area-inset-right) + 18px);
   padding-bottom: calc(env(safe-area-inset-bottom) + 18px);
+
+  /* iPhone width look */
   max-width: 520px;
   margin: 0 auto;
-  min-height: 100vh;
-  box-sizing: border-box;
+
+  /* Important: app container does NOT scroll; only inner scroll areas do */
+  overflow: hidden;
 }
 
-/* Allow vertical scrolling where needed */
-.scrollArea,
-.nineList {
-  touch-action: pan-y;
-}
-
-/* Remove iOS tap highlight flash */
+/* Remove iOS tap flash */
 .shuffleBtn,
 .nextBtn,
 .categoryItem,
@@ -62,7 +62,7 @@ html, body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* --- Header (Pages 1 & 2) --- */
+/* ====== HEADER ====== */
 .header {
   text-align: center;
   margin-top: 80px;
@@ -86,7 +86,7 @@ html, body {
   border-radius: 999px;
 }
 
-/* --- Back button (Pages 2/3/Settings/Teaser) --- */
+/* ====== BACK BUTTON ====== */
 .backCircle {
   position: fixed;
   top: calc(env(safe-area-inset-top) + 14px);
@@ -107,7 +107,7 @@ html, body {
   transform: translateX(-1px);
 }
 
-/* --- Page 1 categories --- */
+/* ====== PAGE 1: CATEGORIES ====== */
 .categoriesList {
   margin-top: 40px;
   display: grid;
@@ -134,7 +134,7 @@ html, body {
   border-radius: 999px;
 }
 
-/* Hidden settings hotspot bottom-left */
+/* Hidden settings hotspot */
 .settingsHotspot {
   position: fixed;
   left: calc(env(safe-area-inset-left) + 6px);
@@ -144,12 +144,18 @@ html, body {
   opacity: 0.01;
 }
 
-/* --- Page 2 word list --- */
+/* ====== PAGE 2: WORD LIST ====== */
 .scrollArea {
   max-height: 52vh;
   overflow: auto;
   width: 100%;
   margin-top: 16px;
+
+  /* iOS: smooth scrolling inside container */
+  -webkit-overflow-scrolling: touch;
+
+  /* Prevent scroll chaining (works on many browsers; iOS still needs JS too) */
+  overscroll-behavior: contain;
 }
 
 .wordsList {
@@ -173,14 +179,13 @@ html, body {
   color: var(--greenSelect);
 }
 
-/* Buttons row */
+/* Next button */
 .btnRow {
   display: flex;
   justify-content: center;
   margin-top: 20px;
 }
 
-/* Next button */
 .nextBtn {
   font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
   font-size: 32px;
@@ -201,7 +206,7 @@ html, body {
   background: var(--nextEnabled);
 }
 
-/* --- Page 3 nine words --- */
+/* ====== PAGE 3: NINE WORDS ====== */
 body.page-nine #app {
   padding-top: calc(env(safe-area-inset-top) + 60px);
 }
@@ -244,7 +249,7 @@ body.page-nine #app {
   cursor: pointer;
 }
 
-/* --- Settings screen --- */
+/* ====== SETTINGS ====== */
 .settingsWrap {
   padding-top: 50px;
   max-width: 520px;
@@ -292,7 +297,7 @@ body.page-nine #app {
 
 .spacer { height: 200px; }
 
-/* --- Teaser --- */
+/* ====== TEASER ====== */
 .teaserWrap {
   min-height: 70vh;
   display: flex;
@@ -309,7 +314,7 @@ body.page-nine #app {
   padding: 0 20px;
 }
 
-/* Make the handwriting look less heavy (web) */
+/* Make handwriting less heavy on web */
 #app, #app * {
   font-weight: 400 !important;
   -webkit-text-stroke: 0.2px transparent;
