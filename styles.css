@@ -5,31 +5,33 @@
   font-style: normal;
 }
 
-
-:root{
-  --bg: rgb(0,77,0);              /* close to Swift Color(red:0, green:0.3, blue:0) */
+:root {
+  --bg: rgb(0,77,0);
   --fg: #ffffff;
   --line: rgba(255,255,255,0.85);
-  --greenSelect: #00ff66;         /* “green” feel; tweak if you want */
-  --nextEnabled: rgb(0,128,0);    /* Swift-ish button green */
+  --greenSelect: #00ff66;
+  --nextEnabled: rgb(0,128,0);
 }
 
-/* Prevent iOS double-tap / gesture zoom, keep scrolling */
-html, body {
-  touch-action: manipulation;
+/* --- Global iOS / PWA behavior --- */
+html {
   -webkit-text-size-adjust: 100%;
 }
 
-#app {
-  touch-action: manipulation;
-}
-
-
-body {
+html, body {
   margin: 0;
+  padding: 0;
   background: var(--bg);
   color: var(--fg);
   font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
+
+  /* Helps reduce iOS double-tap zoom on tappables */
+  touch-action: manipulation;
+
+  /* Prevent text selection / callout */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 #app {
@@ -43,41 +45,42 @@ body {
   box-sizing: border-box;
 }
 
+/* Allow vertical scrolling where needed */
+.scrollArea,
+.nineList {
+  touch-action: pan-y;
+}
+
+/* Remove iOS tap highlight flash */
+.shuffleBtn,
+.nextBtn,
+.categoryItem,
+.wordItem,
+.backCircle,
+.linkBtn,
+.settingsHotspot {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* --- Header (Pages 1 & 2) --- */
 .header {
   text-align: center;
-  margin-top: 80px;              /* Swift had big top padding (~120) */
+  margin-top: 80px;
 }
 
 .title {
-  font-size: 40px;               /* Swift: 40 */
+  font-size: 40px;
   margin: 0;
   line-height: 1;
+  display: inline-block;
+  position: relative;
 }
 
-.headerUnderline{
+/* underline = text width */
+.title::after {
+  content: "";
+  display: block;
   height: 3px;
-  width: fit-content;
-  margin: 10px auto 0 auto;
-  position: relative;
-}
-.headerUnderline::before{
-  content:"";
-  display:block;
-  height:3px;
-  width: 100%;
-  background: var(--line);
-  border-radius: 999px;
-}
-/* Make underline match text width */
-.header .title{
-  display:inline-block;
-  position: relative;
-}
-.header .title::after{
-  content:"";
-  display:block;
-  height:3px;
   background: var(--line);
   margin: 10px auto 0 auto;
   border-radius: 999px;
@@ -96,90 +99,89 @@ body {
   display: grid;
   place-items: center;
   cursor: pointer;
-  user-select: none;
 }
-.backCircle span{
+
+.backCircle span {
   font-size: 30px;
   line-height: 1;
   transform: translateX(-1px);
 }
 
 /* --- Page 1 categories --- */
-.categoriesList{
+.categoriesList {
   margin-top: 40px;
   display: grid;
-  gap: 25px;                      /* Swift VStack spacing 25 */
+  gap: 25px;
   justify-items: center;
 }
 
-.categoryItem{
+.categoryItem {
   cursor: pointer;
-  user-select: none;
-  text-align:center;
+  text-align: center;
   padding: 10px 0;
 }
 
-.categoryText{
-  font-size: 32px;                /* Swift: 32 */
+.categoryText {
+  font-size: 32px;
   line-height: 1;
 }
 
-.categoryUnderline{
-  width: 150px;                   /* Swift fixed 150 */
+.categoryUnderline {
+  width: 150px;
   height: 3px;
   background: var(--line);
   margin: 10px auto 0 auto;
   border-radius: 999px;
 }
 
-/* Hidden settings hotspot bottom-left (Swift invisible NavigationLink) */
-.settingsHotspot{
+/* Hidden settings hotspot bottom-left */
+.settingsHotspot {
   position: fixed;
   left: calc(env(safe-area-inset-left) + 0px);
   bottom: calc(env(safe-area-inset-bottom) + 0px);
   width: 30px;
   height: 30px;
-  opacity: 0.01;                  /* clickable but basically invisible */
+  opacity: 0.01;
 }
 
 /* --- Page 2 word list --- */
-.scrollArea{
+.scrollArea {
   max-height: 52vh;
   overflow: auto;
   width: 100%;
   margin-top: 16px;
 }
 
-.wordsList{
+.wordsList {
   margin-top: 10px;
   display: grid;
-  gap: 10px;                      /* Swift VStack spacing 10 */
+  gap: 10px;
   justify-items: center;
   padding-bottom: 10px;
 }
 
-.wordItem{
-  font-size: 32px;                /* Swift 32 */
+.wordItem {
+  font-size: 32px;
   line-height: 1.1;
   padding: 6px 10px;
   cursor: pointer;
-  user-select: none;
   text-align: center;
   color: var(--fg);
 }
 
-.wordItem.selected{
-  color: var(--greenSelect);      /* Swift always turns green */
+.wordItem.selected {
+  color: var(--greenSelect);
 }
 
-/* Next button matches Swift: gray when disabled, green when enabled */
-.btnRow{
-  display:flex;
-  justify-content:center;
+/* Buttons row */
+.btnRow {
+  display: flex;
+  justify-content: center;
   margin-top: 20px;
 }
 
-.nextBtn{
+/* Next button */
+.nextBtn {
   font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
   font-size: 32px;
   color: white;
@@ -190,29 +192,29 @@ body {
   cursor: pointer;
 }
 
-.nextBtn:disabled{
+.nextBtn:disabled {
   opacity: 1;
   cursor: default;
 }
 
-.nextBtn:not(:disabled){
+.nextBtn:not(:disabled) {
   background: var(--nextEnabled);
 }
 
 /* --- Page 3 nine words --- */
-body.page-nine #app{
+body.page-nine #app {
   padding-top: calc(env(safe-area-inset-top) + 60px);
 }
 
-.nineList{
+.nineList {
   margin-top: 40px;
-  display:grid;
-  gap: 0.5px;                     /* Swift spacing 0.5 */
+  display: grid;
+  gap: 0.5px;
   justify-items: stretch;
 }
 
-.nineItem{
-  font-size: 26px;                /* Swift 26 */
+.nineItem {
+  font-size: 26px;
   color: white;
   padding: 14px 10px;
   text-align: center;
@@ -221,17 +223,17 @@ body.page-nine #app{
   text-overflow: ellipsis;
 }
 
-.nineHighlight{
-  color: var(--greenSelect);      /* only when setting enabled */
+.nineHighlight {
+  color: var(--greenSelect);
 }
 
-/* Shuffle button matches Swift: outline rectangle */
-.shuffleRow{
+/* Shuffle button */
+.shuffleRow {
   margin-top: 10px;
   padding-bottom: 50px;
 }
 
-.shuffleBtn{
+.shuffleBtn {
   font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
   font-size: 24px;
   color: white;
@@ -242,49 +244,41 @@ body.page-nine #app{
   cursor: pointer;
 }
 
-.shuffleBtn, .nextBtn, .categoryItem, .wordItem, .backCircle {
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-
 /* --- Settings screen --- */
-.settingsWrap{
+.settingsWrap {
   padding-top: 50px;
   max-width: 520px;
   margin: 0 auto;
 }
 
-.settingsTitle{
-  text-align:center;
+.settingsTitle {
+  text-align: center;
   font-size: 32px;
   margin-top: 60px;
 }
 
-.toggleRow{
+.toggleRow {
   margin-top: 30px;
-  display:flex;
+  display: flex;
   justify-content: space-between;
-  align-items:center;
+  align-items: center;
   gap: 12px;
   padding: 16px;
 }
 
-.toggleLabel{
+.toggleLabel {
   font-size: 32px;
   color: white;
 }
 
-.toggleRow input[type="checkbox"]{
+.toggleRow input[type="checkbox"] {
   width: 28px;
   height: 28px;
 }
 
-.linkBtn{
+.linkBtn {
   margin-top: 50px;
-  display:block;
+  display: block;
   width: 100%;
   font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
   font-size: 32px;
@@ -293,25 +287,25 @@ body.page-nine #app{
   background: transparent;
   border: none;
   cursor: pointer;
-  text-align:center;
+  text-align: center;
 }
 
-.spacer{ height: 200px; }
+.spacer { height: 200px; }
 
 /* --- Teaser --- */
-.teaserWrap{
+.teaserWrap {
   min-height: 70vh;
-  display:flex;
+  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 12px;
 }
 
-.teaserText{
+.teaserText {
   font-size: 32px;
   color: white;
-  text-align:center;
+  text-align: center;
   padding: 0 20px;
 }
 
@@ -323,4 +317,3 @@ body.page-nine #app{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
