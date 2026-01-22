@@ -8,10 +8,11 @@ let nineWords = [];
 // mirrors Swift setting: highlightSelectedWord
 let highlightSelectedWord = loadSetting();
 
+// Track which screen we’re on (for swipe-back)
+let currentPage = "categories";
+
 /* -----------------------
    iOS/PWA fast-tap helper (no lag, no ghost click)
-   - Uses pointer/touch when available
-   - Prevents the delayed "click" that iOS sometimes fires after touch
    ----------------------- */
 function fastTap(el, handler) {
   if (!el) return;
@@ -19,13 +20,12 @@ function fastTap(el, handler) {
   let lastTouchTime = 0;
 
   const run = (e) => {
-    // For touch/pointer: stop Safari gesture interpretation for this tap
     if (e && typeof e.preventDefault === "function") e.preventDefault();
     if (e && typeof e.stopPropagation === "function") e.stopPropagation();
     handler(e);
   };
 
-  // Touch is the most reliable on iOS
+  // Touch is most reliable on iOS
   el.addEventListener(
     "touchend",
     (e) => {
@@ -39,8 +39,7 @@ function fastTap(el, handler) {
   el.addEventListener(
     "pointerup",
     (e) => {
-      // If touch just happened, ignore pointer event duplicates
-      if (Date.now() - lastTouchTime < 350) return;
+      if (Date.now() - lastTouchTime < 350) return; // avoid duplicate
       run(e);
     },
     { passive: false }
@@ -48,21 +47,21 @@ function fastTap(el, handler) {
 
   // Fallback click (desktop / non-touch)
   el.addEventListener("click", (e) => {
-    // Ignore the "ghost click" that can arrive after touch
-    if (Date.now() - lastTouchTime < 700) return;
+    if (Date.now() - lastTouchTime < 700) return; // ignore iOS ghost click
     run(e);
   });
 }
 
-// (Optional) block dblclick zoom behavior without slowing taps
+// Block dblclick zoom behavior without slowing taps
 document.addEventListener(
   "dblclick",
-  (e) => {
-    e.preventDefault();
-  },
+  (e) => e.preventDefault(),
   { passive: false }
 );
 
+/* -----------------------
+   Load data then start
+   ----------------------- */
 fetch("words.json")
   .then((res) => res.json())
   .then((data) => {
@@ -73,9 +72,19 @@ fetch("words.json")
     app.innerHTML = `<h1 style="color:white">Error loading words.json</h1><pre style="color:white">${err}</pre>`;
   });
 
+/* -----------------------
+   Page helpers
+   ----------------------- */
 function setPageClass(name) {
   document.body.classList.remove("page-categories", "page-words", "page-nine", "page-settings", "page-teaser");
   document.body.classList.add(name);
+
+  // Map body class -> our currentPage string
+  if (name === "page-categories") currentPage = "categories";
+  else if (name === "page-words") currentPage = "words";
+  else if (name === "page-nine") currentPage = "nine";
+  else if (name === "page-settings") currentPage = "settings";
+  else if (name === "page-teaser") currentPage = "teaser";
 }
 
 function loadSetting() {
@@ -95,15 +104,89 @@ function saveSetting(value) {
 }
 
 /* -----------------------
+   Swipe-back (iOS-style)
+   - Start near left edge
+   - Move right enough
+   - Ignore if mostly vertical (scrolling)
+   ----------------------- */
+(function enableSwipeBack() {
+  let startX = 0;
+  let startY = 0;
+  let tracking = false;
+
+  document.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches.length !== 1) return;
+
+      const t = e.touches[0];
+      startX = t.clientX;
+      startY = t.clientY;
+
+      // Only edge swipe (left 24px)
+      tracking = startX <= 24;
+    },
+    { passive: true }
+  );
+
+  document.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!tracking) return;
+
+      const t = e.touches[0];
+      const dx = t.clientX - startX;
+      const dy = Math.abs(t.clientY - startY);
+
+      // If vertical movement dominates, treat as scroll, cancel swipe tracking
+      if (dy > dx) tracking = false;
+    },
+    { passive: true }
+  );
+
+  document.addEventListener("touchend", (e) => {
+    if (!tracking) return;
+    tracking = false;
+
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX;
+
+    if (dx >= 70) {
+      goBack();
+    }
+  });
+})();
+
+function goBack() {
+  // Mirror your back button behavior
+  if (currentPage === "words") {
+    showCategories();
+    return;
+  }
+  if (currentPage === "nine") {
+    if (currentCategory) showWordList(currentCategory);
+    else showCategories();
+    return;
+  }
+  if (currentPage === "settings") {
+    showCategories();
+    return;
+  }
+  if (currentPage === "teaser") {
+    showSettings();
+    return;
+  }
+  // categories: no-op
+}
+
+/* -----------------------
    Page 1: Categories
-   Swift: category list underlined, plus hidden settings tap
    ----------------------- */
 function showCategories() {
   setPageClass("page-categories");
   currentCategory = null;
   selectedWord = null;
 
-  // Swift uses jsonManager.categories.keys.sorted()
   const categories = Object.keys(wordData).sort((a, b) => a.localeCompare(b));
 
   app.innerHTML = `
@@ -124,7 +207,6 @@ function showCategories() {
         .join("")}
     </div>
 
-    <!-- Swift: invisible NavigationLink bottom-left -->
     <div class="settingsHotspot" id="settingsHotspot" aria-label="Settings"></div>
   `;
 
@@ -136,7 +218,7 @@ function showCategories() {
 }
 
 /* -----------------------
-   Settings screen (Swift SettingsView)
+   Settings screen
    ----------------------- */
 function showSettings() {
   setPageClass("page-settings");
@@ -160,7 +242,7 @@ function showSettings() {
 
   fastTap(document.getElementById("backBtn"), showCategories);
 
-  // checkbox should remain normal (no preventDefault)
+  // checkbox should remain normal
   document.getElementById("highlightToggle").addEventListener("change", (e) => {
     saveSetting(e.target.checked);
   });
@@ -169,7 +251,7 @@ function showSettings() {
 }
 
 /* -----------------------
-   Teaser screen (Swift TeaserView)
+   Teaser screen
    ----------------------- */
 function showTeaser() {
   setPageClass("page-teaser");
@@ -187,11 +269,10 @@ function showTeaser() {
 }
 
 /* -----------------------
-   Page 2: Word list (Swift Page2)
-   - Header underlined only
-   - Words are SHUFFLED on appear (not sorted)
-   - Selecting turns text GREEN
-   - Next button enabled only if selected
+   Page 2: Word list
+   - shuffled on appear
+   - select turns green
+   - Next enabled only if selected
    ----------------------- */
 function showWordList(category) {
   setPageClass("page-words");
@@ -201,7 +282,6 @@ function showWordList(category) {
   const straight = wordData[category]?.Straight ?? [];
   const curved = wordData[category]?.Curved ?? [];
 
-  // Swift: (straight + curved).shuffled()
   const words = shuffleCopy([...straight, ...curved]);
 
   app.innerHTML = `
@@ -214,11 +294,7 @@ function showWordList(category) {
     <div class="scrollArea">
       <div class="list wordsList">
         ${words
-          .map(
-            (w) => `
-          <div class="wordItem" data-word="${escapeHtml(w)}">${w}</div>
-        `
-          )
+          .map((w) => `<div class="wordItem" data-word="${escapeHtml(w)}">${w}</div>`)
           .join("")}
       </div>
     </div>
@@ -245,10 +321,9 @@ function showWordList(category) {
 }
 
 /* -----------------------
-   Page 3: 9 words (Swift Page3)
-   - NO header
-   - SHUFFLE changes words + positions but keeps trick logic
-   - Highlight selected only if setting enabled
+   Page 3: 9 words
+   - no header
+   - shuffle rebuilds list with trick logic
    ----------------------- */
 function showNineScreen() {
   if (!currentCategory || !selectedWord) return;
@@ -277,18 +352,22 @@ function renderNineScreen() {
     </div>
   `;
 
-  fastTap(document.getElementById("backBtn"), () => showWordList(currentCategory));
+  fastTap(document.getElementById("backBtn"), () => {
+    if (currentCategory) showWordList(currentCategory);
+    else showCategories();
+  });
 
-  // FAST shuffle: no click delay, no throttling, no zoom
   fastTap(document.getElementById("shuffleBtn"), () => {
     nineWords = buildNineWords(currentCategory, selectedWord);
     renderNineScreen();
   });
 }
 
-/* Trick logic matches Swift Page3:
-   If selectedWord is in Straight -> decoys from Curved, else decoys from Straight
-*/
+/* -----------------------
+   Trick logic
+   If chosen is Straight -> decoys from Curved
+   else -> decoys from Straight
+   ----------------------- */
 function buildNineWords(category, chosen) {
   const categoryData = wordData[category];
   if (!categoryData) return [];
@@ -318,7 +397,7 @@ function shuffleCopy(arr) {
 }
 
 function escapeHtml(str) {
-  return str
+  return String(str)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
