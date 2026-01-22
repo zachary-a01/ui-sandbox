@@ -8,11 +8,11 @@ let nineWords = [];
 // mirrors Swift setting: highlightSelectedWord
 let highlightSelectedWord = loadSetting();
 
-// Track which screen we’re on (for swipe-back)
+// Current page for swipe-back routing
 let currentPage = "categories";
 
 /* -----------------------
-   iOS/PWA fast-tap helper (no lag, no ghost click)
+   FAST TAP (no lag, no ghost click)
    ----------------------- */
 function fastTap(el, handler) {
   if (!el) return;
@@ -25,7 +25,6 @@ function fastTap(el, handler) {
     handler(e);
   };
 
-  // Touch is most reliable on iOS
   el.addEventListener(
     "touchend",
     (e) => {
@@ -35,29 +34,181 @@ function fastTap(el, handler) {
     { passive: false }
   );
 
-  // Pointer events cover modern browsers
   el.addEventListener(
     "pointerup",
     (e) => {
-      if (Date.now() - lastTouchTime < 350) return; // avoid duplicate
+      if (Date.now() - lastTouchTime < 350) return;
       run(e);
     },
     { passive: false }
   );
 
-  // Fallback click (desktop / non-touch)
   el.addEventListener("click", (e) => {
-    if (Date.now() - lastTouchTime < 700) return; // ignore iOS ghost click
+    if (Date.now() - lastTouchTime < 700) return;
     run(e);
   });
 }
 
-// Block dblclick zoom behavior without slowing taps
+// Prevent dblclick zoom (no tap throttling)
 document.addEventListener(
   "dblclick",
   (e) => e.preventDefault(),
   { passive: false }
 );
+
+/* -----------------------
+   iOS rubber-band / page-drag prevention
+   Only allow scrolling inside .scrollArea.
+   ----------------------- */
+(function lockPageScrollToScrollAreas() {
+  function closestScrollArea(el) {
+    while (el && el !== document.body) {
+      if (el.classList && el.classList.contains("scrollArea")) return el;
+      el = el.parentNode;
+    }
+    return null;
+  }
+
+  // On iOS, overscroll bounce happens when the scroll container is at top/bottom.
+  // This prevents the "whole page moves" effect.
+  document.addEventListener(
+    "touchmove",
+    (e) => {
+      const sa = closestScrollArea(e.target);
+      if (!sa) {
+        // Not in a scroll area -> block dragging the page
+        e.preventDefault();
+        return;
+      }
+
+      // In a scroll area -> allow normal scrolling, but prevent bounce at edges
+      const atTop = sa.scrollTop <= 0;
+      const atBottom = sa.scrollTop + sa.clientHeight >= sa.scrollHeight;
+
+      // Determine scroll direction using touch delta
+      // We can only know direction if we stored previous touch Y
+      // We'll store it on the element.
+      const touch = e.touches[0];
+      const lastY = sa.__lastTouchY ?? touch.clientY;
+      const dy = touch.clientY - lastY;
+      sa.__lastTouchY = touch.clientY;
+
+      // dy > 0 means user is dragging down (trying to scroll up)
+      if (atTop && dy > 0) {
+        e.preventDefault(); // stop bounce at top
+        return;
+      }
+
+      // dy < 0 means user is dragging up (trying to scroll down)
+      if (atBottom && dy < 0) {
+        e.preventDefault(); // stop bounce at bottom
+        return;
+      }
+
+      // otherwise allow
+    },
+    { passive: false }
+  );
+
+  document.addEventListener(
+    "touchend",
+    (e) => {
+      const sa = e.target && e.target.classList && e.target.classList.contains("scrollArea")
+        ? e.target
+        : null;
+      if (sa) sa.__lastTouchY = null;
+    },
+    { passive: true }
+  );
+})();
+
+/* -----------------------
+   SWIPE BACK (left-edge, iOS-like)
+   - start within 24px of left edge
+   - horizontal swipe right >= 70px
+   - ignores vertical scroll gestures
+   ----------------------- */
+(function enableSwipeBack() {
+  let startX = 0;
+  let startY = 0;
+  let tracking = false;
+  let decided = false;
+  let isHorizontal = false;
+
+  document.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches.length !== 1) return;
+
+      const t = e.touches[0];
+      startX = t.clientX;
+      startY = t.clientY;
+
+      tracking = startX <= 24; // edge only
+      decided = false;
+      isHorizontal = false;
+    },
+    { passive: true }
+  );
+
+  document.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!tracking) return;
+
+      const t = e.touches[0];
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+
+      if (!decided) {
+        decided = true;
+        isHorizontal = Math.abs(dx) > Math.abs(dy);
+      }
+
+      // If it’s a horizontal edge swipe, prevent the browser from doing anything weird
+      if (isHorizontal && dx > 0) {
+        e.preventDefault();
+      } else {
+        // if it’s vertical, cancel tracking so scroll works
+        tracking = false;
+      }
+    },
+    { passive: false }
+  );
+
+  document.addEventListener("touchend", (e) => {
+    if (!tracking) return;
+    tracking = false;
+
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX;
+
+    if (dx >= 70) {
+      goBack();
+    }
+  });
+})();
+
+function goBack() {
+  if (currentPage === "words") {
+    showCategories();
+    return;
+  }
+  if (currentPage === "nine") {
+    if (currentCategory) showWordList(currentCategory);
+    else showCategories();
+    return;
+  }
+  if (currentPage === "settings") {
+    showCategories();
+    return;
+  }
+  if (currentPage === "teaser") {
+    showSettings();
+    return;
+  }
+  // categories -> do nothing
+}
 
 /* -----------------------
    Load data then start
@@ -72,14 +223,10 @@ fetch("words.json")
     app.innerHTML = `<h1 style="color:white">Error loading words.json</h1><pre style="color:white">${err}</pre>`;
   });
 
-/* -----------------------
-   Page helpers
-   ----------------------- */
 function setPageClass(name) {
   document.body.classList.remove("page-categories", "page-words", "page-nine", "page-settings", "page-teaser");
   document.body.classList.add(name);
 
-  // Map body class -> our currentPage string
   if (name === "page-categories") currentPage = "categories";
   else if (name === "page-words") currentPage = "words";
   else if (name === "page-nine") currentPage = "nine";
@@ -101,82 +248,6 @@ function saveSetting(value) {
   try {
     localStorage.setItem("highlightSelectedWord", highlightSelectedWord ? "true" : "false");
   } catch {}
-}
-
-/* -----------------------
-   Swipe-back (iOS-style)
-   - Start near left edge
-   - Move right enough
-   - Ignore if mostly vertical (scrolling)
-   ----------------------- */
-(function enableSwipeBack() {
-  let startX = 0;
-  let startY = 0;
-  let tracking = false;
-
-  document.addEventListener(
-    "touchstart",
-    (e) => {
-      if (e.touches.length !== 1) return;
-
-      const t = e.touches[0];
-      startX = t.clientX;
-      startY = t.clientY;
-
-      // Only edge swipe (left 24px)
-      tracking = startX <= 24;
-    },
-    { passive: true }
-  );
-
-  document.addEventListener(
-    "touchmove",
-    (e) => {
-      if (!tracking) return;
-
-      const t = e.touches[0];
-      const dx = t.clientX - startX;
-      const dy = Math.abs(t.clientY - startY);
-
-      // If vertical movement dominates, treat as scroll, cancel swipe tracking
-      if (dy > dx) tracking = false;
-    },
-    { passive: true }
-  );
-
-  document.addEventListener("touchend", (e) => {
-    if (!tracking) return;
-    tracking = false;
-
-    const t = e.changedTouches[0];
-    const dx = t.clientX - startX;
-
-    if (dx >= 70) {
-      goBack();
-    }
-  });
-})();
-
-function goBack() {
-  // Mirror your back button behavior
-  if (currentPage === "words") {
-    showCategories();
-    return;
-  }
-  if (currentPage === "nine") {
-    if (currentCategory) showWordList(currentCategory);
-    else showCategories();
-    return;
-  }
-  if (currentPage === "settings") {
-    showCategories();
-    return;
-  }
-  if (currentPage === "teaser") {
-    showSettings();
-    return;
-  }
-  // categories: no-op
 }
 
 /* -----------------------
@@ -218,7 +289,7 @@ function showCategories() {
 }
 
 /* -----------------------
-   Settings screen
+   Settings
    ----------------------- */
 function showSettings() {
   setPageClass("page-settings");
@@ -242,7 +313,6 @@ function showSettings() {
 
   fastTap(document.getElementById("backBtn"), showCategories);
 
-  // checkbox should remain normal
   document.getElementById("highlightToggle").addEventListener("change", (e) => {
     saveSetting(e.target.checked);
   });
@@ -251,7 +321,7 @@ function showSettings() {
 }
 
 /* -----------------------
-   Teaser screen
+   Teaser
    ----------------------- */
 function showTeaser() {
   setPageClass("page-teaser");
@@ -270,9 +340,6 @@ function showTeaser() {
 
 /* -----------------------
    Page 2: Word list
-   - shuffled on appear
-   - select turns green
-   - Next enabled only if selected
    ----------------------- */
 function showWordList(category) {
   setPageClass("page-words");
@@ -281,7 +348,6 @@ function showWordList(category) {
 
   const straight = wordData[category]?.Straight ?? [];
   const curved = wordData[category]?.Curved ?? [];
-
   const words = shuffleCopy([...straight, ...curved]);
 
   app.innerHTML = `
@@ -321,9 +387,7 @@ function showWordList(category) {
 }
 
 /* -----------------------
-   Page 3: 9 words
-   - no header
-   - shuffle rebuilds list with trick logic
+   Page 3: Nine words
    ----------------------- */
 function showNineScreen() {
   if (!currentCategory || !selectedWord) return;
@@ -365,8 +429,6 @@ function renderNineScreen() {
 
 /* -----------------------
    Trick logic
-   If chosen is Straight -> decoys from Curved
-   else -> decoys from Straight
    ----------------------- */
 function buildNineWords(category, chosen) {
   const categoryData = wordData[category];
