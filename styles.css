@@ -1,0 +1,296 @@
+@font-face {
+  font-family: "BradleyHand";
+  src: url("Bradley Hand Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+:root{
+  --bg: rgb(0,77,0);              /* close to Swift Color(red:0, green:0.3, blue:0) */
+  --fg: #ffffff;
+  --line: rgba(255,255,255,0.85);
+  --greenSelect: #00ff66;         /* “green” feel; tweak if you want */
+  --nextEnabled: rgb(0,128,0);    /* Swift-ish button green */
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
+}
+
+#app {
+  padding-top: calc(env(safe-area-inset-top) + 18px);
+  padding-left: calc(env(safe-area-inset-left) + 18px);
+  padding-right: calc(env(safe-area-inset-right) + 18px);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 18px);
+  max-width: 520px;
+  margin: 0 auto;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* --- Header (Pages 1 & 2) --- */
+.header {
+  text-align: center;
+  margin-top: 80px;              /* Swift had big top padding (~120) */
+}
+
+.title {
+  font-size: 40px;               /* Swift: 40 */
+  margin: 0;
+  line-height: 1;
+}
+
+.headerUnderline{
+  height: 3px;
+  width: fit-content;
+  margin: 10px auto 0 auto;
+  position: relative;
+}
+.headerUnderline::before{
+  content:"";
+  display:block;
+  height:3px;
+  width: 100%;
+  background: var(--line);
+  border-radius: 999px;
+}
+/* Make underline match text width */
+.header .title{
+  display:inline-block;
+  position: relative;
+}
+.header .title::after{
+  content:"";
+  display:block;
+  height:3px;
+  background: var(--line);
+  margin: 10px auto 0 auto;
+  border-radius: 999px;
+}
+
+/* --- Back button (Pages 2/3/Settings/Teaser) --- */
+.backCircle {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 14px);
+  left: calc(env(safe-area-inset-left) + 14px);
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.18);
+  border: 2px solid rgba(255,255,255,0.15);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+.backCircle span{
+  font-size: 30px;
+  line-height: 1;
+  transform: translateX(-1px);
+}
+
+/* --- Page 1 categories --- */
+.categoriesList{
+  margin-top: 40px;
+  display: grid;
+  gap: 25px;                      /* Swift VStack spacing 25 */
+  justify-items: center;
+}
+
+.categoryItem{
+  cursor: pointer;
+  user-select: none;
+  text-align:center;
+  padding: 10px 0;
+}
+
+.categoryText{
+  font-size: 32px;                /* Swift: 32 */
+  line-height: 1;
+}
+
+.categoryUnderline{
+  width: 150px;                   /* Swift fixed 150 */
+  height: 3px;
+  background: var(--line);
+  margin: 10px auto 0 auto;
+  border-radius: 999px;
+}
+
+/* Hidden settings hotspot bottom-left (Swift invisible NavigationLink) */
+.settingsHotspot{
+  position: fixed;
+  left: calc(env(safe-area-inset-left) + 0px);
+  bottom: calc(env(safe-area-inset-bottom) + 0px);
+  width: 30px;
+  height: 30px;
+  opacity: 0.01;                  /* clickable but basically invisible */
+}
+
+/* --- Page 2 word list --- */
+.scrollArea{
+  max-height: 52vh;
+  overflow: auto;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.wordsList{
+  margin-top: 10px;
+  display: grid;
+  gap: 10px;                      /* Swift VStack spacing 10 */
+  justify-items: center;
+  padding-bottom: 10px;
+}
+
+.wordItem{
+  font-size: 32px;                /* Swift 32 */
+  line-height: 1.1;
+  padding: 6px 10px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center;
+  color: var(--fg);
+}
+
+.wordItem.selected{
+  color: var(--greenSelect);      /* Swift always turns green */
+}
+
+/* Next button matches Swift: gray when disabled, green when enabled */
+.btnRow{
+  display:flex;
+  justify-content:center;
+  margin-top: 20px;
+}
+
+.nextBtn{
+  font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
+  font-size: 32px;
+  color: white;
+  padding: 14px 26px;
+  border-radius: 10px;
+  border: none;
+  background: gray;
+  cursor: pointer;
+}
+
+.nextBtn:disabled{
+  opacity: 1;
+  cursor: default;
+}
+
+.nextBtn:not(:disabled){
+  background: var(--nextEnabled);
+}
+
+/* --- Page 3 nine words --- */
+body.page-nine #app{
+  padding-top: calc(env(safe-area-inset-top) + 60px);
+}
+
+.nineList{
+  margin-top: 40px;
+  display:grid;
+  gap: 0.5px;                     /* Swift spacing 0.5 */
+  justify-items: stretch;
+}
+
+.nineItem{
+  font-size: 26px;                /* Swift 26 */
+  color: white;
+  padding: 14px 10px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nineHighlight{
+  color: var(--greenSelect);      /* only when setting enabled */
+}
+
+/* Shuffle button matches Swift: outline rectangle */
+.shuffleRow{
+  margin-top: 10px;
+  padding-bottom: 50px;
+}
+
+.shuffleBtn{
+  font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
+  font-size: 24px;
+  color: white;
+  padding: 14px 26px;
+  border-radius: 10px;
+  border: 2px solid white;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* --- Settings screen --- */
+.settingsWrap{
+  padding-top: 50px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.settingsTitle{
+  text-align:center;
+  font-size: 32px;
+  margin-top: 60px;
+}
+
+.toggleRow{
+  margin-top: 30px;
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  gap: 12px;
+  padding: 16px;
+}
+
+.toggleLabel{
+  font-size: 32px;
+  color: white;
+}
+
+.toggleRow input[type="checkbox"]{
+  width: 28px;
+  height: 28px;
+}
+
+.linkBtn{
+  margin-top: 50px;
+  display:block;
+  width: 100%;
+  font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
+  font-size: 32px;
+  color: white;
+  padding: 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align:center;
+}
+
+.spacer{ height: 200px; }
+
+/* --- Teaser --- */
+.teaserWrap{
+  min-height: 70vh;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.teaserText{
+  font-size: 32px;
+  color: white;
+  text-align:center;
+  padding: 0 20px;
+}
