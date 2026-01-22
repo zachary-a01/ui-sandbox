@@ -1,1 +1,10 @@
-(Temporary)
+{
+  "name": "MindLister 2.0",
+  "short_name": "MindLister",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b3f16",
+  "theme_color": "#0b3f16",
+  "icons": []
+}

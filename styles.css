@@ -1,9 +1,10 @@
 @font-face {
   font-family: "BradleyHand";
-  src: url("Bradley Hand Bold.ttf") format("truetype");
+  src: url("./BradleyHandBold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
+
 
 :root{
   --bg: rgb(0,77,0);              /* close to Swift Color(red:0, green:0.3, blue:0) */
@@ -294,3 +295,13 @@ body.page-nine #app{
   text-align:center;
   padding: 0 20px;
 }
+
+/* Make the handwriting look less heavy (web) */
+#app, #app * {
+  font-weight: 400 !important;
+  -webkit-text-stroke: 0.2px transparent;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+

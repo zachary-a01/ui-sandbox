@@ -2,27 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Don’t let search engines index it (still public, just not indexed) -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>MindLister 2.0</title>
 
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
 
-  <div id="app">
-    <h1>MindLister 2.0</h1>
-    <p>If you see this, the app loaded correctly.</p>
-  </div>
+<body>
+  <div id="app"></div>
 
   <script src="app.js"></script>
 
   <script>
+    // Offline support
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js");
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js");
+      });
     }
   </script>
-
 </body>
 </html>
