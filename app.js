@@ -5,7 +5,56 @@ let currentCategory = null;
 let selectedWord = null;
 let nineWords = [];
 
-// iOS: prevent double-tap zoom (especially on the Shuffle button)
+// mirrors Swift setting: highlightSelectedWord
+let highlightSelectedWord = loadSetting();
+
+/* -----------------------
+   iOS/PWA fast-tap helper (no lag, no ghost click)
+   - Uses pointer/touch when available
+   - Prevents the delayed "click" that iOS sometimes fires after touch
+   ----------------------- */
+function fastTap(el, handler) {
+  if (!el) return;
+
+  let lastTouchTime = 0;
+
+  const run = (e) => {
+    // For touch/pointer: stop Safari gesture interpretation for this tap
+    if (e && typeof e.preventDefault === "function") e.preventDefault();
+    if (e && typeof e.stopPropagation === "function") e.stopPropagation();
+    handler(e);
+  };
+
+  // Touch is the most reliable on iOS
+  el.addEventListener(
+    "touchend",
+    (e) => {
+      lastTouchTime = Date.now();
+      run(e);
+    },
+    { passive: false }
+  );
+
+  // Pointer events cover modern browsers
+  el.addEventListener(
+    "pointerup",
+    (e) => {
+      // If touch just happened, ignore pointer event duplicates
+      if (Date.now() - lastTouchTime < 350) return;
+      run(e);
+    },
+    { passive: false }
+  );
+
+  // Fallback click (desktop / non-touch)
+  el.addEventListener("click", (e) => {
+    // Ignore the "ghost click" that can arrive after touch
+    if (Date.now() - lastTouchTime < 700) return;
+    run(e);
+  });
+}
+
+// (Optional) block dblclick zoom behavior without slowing taps
 document.addEventListener(
   "dblclick",
   (e) => {
@@ -13,22 +62,6 @@ document.addEventListener(
   },
   { passive: false }
 );
-
-// Extra guard for very fast taps
-let lastTouchEnd = 0;
-document.addEventListener(
-  "touchend",
-  (e) => {
-    const now = Date.now();
-    if (now - lastTouchEnd <= 300) e.preventDefault();
-    lastTouchEnd = now;
-  },
-  { passive: false }
-);
-
-
-// mirrors Swift setting: highlightSelectedWord
-let highlightSelectedWord = loadSetting();
 
 fetch("words.json")
   .then((res) => res.json())
@@ -76,7 +109,6 @@ function showCategories() {
   app.innerHTML = `
     <div class="header">
       <h1 class="title">CATEGORIES</h1>
-      <div class="headerUnderline"></div>
     </div>
 
     <div class="list categoriesList">
@@ -92,15 +124,15 @@ function showCategories() {
         .join("")}
     </div>
 
-    <!-- Swift: invisible 30x30 NavigationLink bottom-left -->
+    <!-- Swift: invisible NavigationLink bottom-left -->
     <div class="settingsHotspot" id="settingsHotspot" aria-label="Settings"></div>
   `;
 
   document.querySelectorAll(".categoryItem").forEach((item) => {
-    item.addEventListener("click", () => showWordList(item.dataset.cat));
+    fastTap(item, () => showWordList(item.dataset.cat));
   });
 
-  document.getElementById("settingsHotspot").addEventListener("click", showSettings);
+  fastTap(document.getElementById("settingsHotspot"), showSettings);
 }
 
 /* -----------------------
@@ -120,19 +152,20 @@ function showSettings() {
         <input type="checkbox" id="highlightToggle" ${highlightSelectedWord ? "checked" : ""}/>
       </label>
 
-      <button class="linkBtn" id="teaserBtn">Learn the secret here!</button>
+      <button class="linkBtn" id="teaserBtn" type="button">Learn the secret here!</button>
 
       <div class="spacer"></div>
     </div>
   `;
 
-  document.getElementById("backBtn").addEventListener("click", showCategories);
+  fastTap(document.getElementById("backBtn"), showCategories);
 
+  // checkbox should remain normal (no preventDefault)
   document.getElementById("highlightToggle").addEventListener("change", (e) => {
     saveSetting(e.target.checked);
   });
 
-  document.getElementById("teaserBtn").addEventListener("click", showTeaser);
+  fastTap(document.getElementById("teaserBtn"), showTeaser);
 }
 
 /* -----------------------
@@ -150,7 +183,7 @@ function showTeaser() {
     </div>
   `;
 
-  document.getElementById("backBtn").addEventListener("click", showSettings);
+  fastTap(document.getElementById("backBtn"), showSettings);
 }
 
 /* -----------------------
@@ -176,7 +209,6 @@ function showWordList(category) {
 
     <div class="header">
       <h1 class="title">${category.toUpperCase()}</h1>
-      <div class="headerUnderline"></div>
     </div>
 
     <div class="scrollArea">
@@ -192,14 +224,14 @@ function showWordList(category) {
     </div>
 
     <div class="btnRow">
-      <button class="nextBtn" id="nextBtn" disabled>Next</button>
+      <button class="nextBtn" id="nextBtn" type="button" disabled>Next</button>
     </div>
   `;
 
-  document.getElementById("backBtn").addEventListener("click", showCategories);
+  fastTap(document.getElementById("backBtn"), showCategories);
 
   document.querySelectorAll(".wordItem").forEach((item) => {
-    item.addEventListener("click", () => {
+    fastTap(item, () => {
       document.querySelectorAll(".wordItem").forEach((x) => x.classList.remove("selected"));
       item.classList.add("selected");
       selectedWord = item.dataset.word;
@@ -207,7 +239,9 @@ function showWordList(category) {
     });
   });
 
-  document.getElementById("nextBtn").addEventListener("click", showNineScreen);
+  fastTap(document.getElementById("nextBtn"), () => {
+    if (!document.getElementById("nextBtn").disabled) showNineScreen();
+  });
 }
 
 /* -----------------------
@@ -239,13 +273,14 @@ function renderNineScreen() {
     </div>
 
     <div class="btnRow shuffleRow">
-      <button class="shuffleBtn" id="shuffleBtn">SHUFFLE</button>
+      <button class="shuffleBtn" id="shuffleBtn" type="button">SHUFFLE</button>
     </div>
   `;
 
-  document.getElementById("backBtn").addEventListener("click", () => showWordList(currentCategory));
+  fastTap(document.getElementById("backBtn"), () => showWordList(currentCategory));
 
-  document.getElementById("shuffleBtn").addEventListener("click", () => {
+  // FAST shuffle: no click delay, no throttling, no zoom
+  fastTap(document.getElementById("shuffleBtn"), () => {
     nineWords = buildNineWords(currentCategory, selectedWord);
     renderNineScreen();
   });
