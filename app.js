@@ -57,10 +57,12 @@ document.addEventListener(
 );
 
 /* -----------------------
-   iOS rubber-band / page-drag prevention
-   Only allow scrolling inside .scrollArea.
+   iOS RUBBER-BAND KILLER
+   - Body is overflow:hidden in CSS, but iOS can still "rubber band"
+   - This forces: only .scrollArea can scroll
+   - Prevents bounce at top/bottom edges of the scrollArea
    ----------------------- */
-(function lockPageScrollToScrollAreas() {
+(function lockOverscrollIOS() {
   function closestScrollArea(el) {
     while (el && el !== document.body) {
       if (el.classList && el.classList.contains("scrollArea")) return el;
@@ -69,54 +71,75 @@ document.addEventListener(
     return null;
   }
 
-  // On iOS, overscroll bounce happens when the scroll container is at top/bottom.
-  // This prevents the "whole page moves" effect.
+  let activeSA = null;
+  let lastY = 0;
+
+  document.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches.length !== 1) return;
+
+      activeSA = closestScrollArea(e.target);
+      lastY = e.touches[0].clientY;
+
+      // If we're not starting inside the scroll area, we will block page-drag on touchmove.
+    },
+    { passive: true }
+  );
+
   document.addEventListener(
     "touchmove",
     (e) => {
-      const sa = closestScrollArea(e.target);
-      if (!sa) {
-        // Not in a scroll area -> block dragging the page
+      if (e.touches.length !== 1) return;
+
+      const y = e.touches[0].clientY;
+      const dy = y - lastY;
+      lastY = y;
+
+      // Not in a scrollArea -> prevent the whole page from dragging/bouncing
+      if (!activeSA) {
         e.preventDefault();
         return;
       }
 
-      // In a scroll area -> allow normal scrolling, but prevent bounce at edges
-      const atTop = sa.scrollTop <= 0;
-      const atBottom = sa.scrollTop + sa.clientHeight >= sa.scrollHeight;
+      // If content doesn't actually scroll, block any movement (prevents bounce)
+      if (activeSA.scrollHeight <= activeSA.clientHeight) {
+        e.preventDefault();
+        return;
+      }
 
-      // Determine scroll direction using touch delta
-      // We can only know direction if we stored previous touch Y
-      // We'll store it on the element.
-      const touch = e.touches[0];
-      const lastY = sa.__lastTouchY ?? touch.clientY;
-      const dy = touch.clientY - lastY;
-      sa.__lastTouchY = touch.clientY;
+      const atTop = activeSA.scrollTop <= 0;
+      const atBottom = activeSA.scrollTop + activeSA.clientHeight >= activeSA.scrollHeight - 1;
 
-      // dy > 0 means user is dragging down (trying to scroll up)
+      // dy > 0 = finger moved down -> user trying to scroll up
       if (atTop && dy > 0) {
         e.preventDefault(); // stop bounce at top
         return;
       }
 
-      // dy < 0 means user is dragging up (trying to scroll down)
+      // dy < 0 = finger moved up -> user trying to scroll down
       if (atBottom && dy < 0) {
         e.preventDefault(); // stop bounce at bottom
         return;
       }
 
-      // otherwise allow
+      // Otherwise allow normal scroll inside the scroll area
     },
     { passive: false }
   );
 
   document.addEventListener(
     "touchend",
-    (e) => {
-      const sa = e.target && e.target.classList && e.target.classList.contains("scrollArea")
-        ? e.target
-        : null;
-      if (sa) sa.__lastTouchY = null;
+    () => {
+      activeSA = null;
+    },
+    { passive: true }
+  );
+
+  document.addEventListener(
+    "touchcancel",
+    () => {
+      activeSA = null;
     },
     { passive: true }
   );
@@ -165,11 +188,11 @@ document.addEventListener(
         isHorizontal = Math.abs(dx) > Math.abs(dy);
       }
 
-      // If it’s a horizontal edge swipe, prevent the browser from doing anything weird
+      // If it’s a horizontal edge swipe, prevent browser from doing anything weird
       if (isHorizontal && dx > 0) {
         e.preventDefault();
       } else {
-        // if it’s vertical, cancel tracking so scroll works
+        // vertical gesture -> cancel swipe so scrolling works
         tracking = false;
       }
     },
