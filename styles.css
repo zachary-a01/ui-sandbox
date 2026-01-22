@@ -137,10 +137,10 @@ html, body {
 /* Hidden settings hotspot bottom-left */
 .settingsHotspot {
   position: fixed;
-  left: calc(env(safe-area-inset-left) + 0px);
-  bottom: calc(env(safe-area-inset-bottom) + 0px);
-  width: 30px;
-  height: 30px;
+  left: calc(env(safe-area-inset-left) + 6px);
+  bottom: calc(env(safe-area-inset-bottom) + 6px);
+  width: 60px;
+  height: 60px;
   opacity: 0.01;
 }
 
