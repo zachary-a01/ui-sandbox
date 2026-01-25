@@ -6,7 +6,7 @@
 @font-face {
   font-family: "NeilNormal";
   src: url("./neil.normal.ttf") format("truetype");
-  font-weight: 500;
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
@@ -348,7 +348,7 @@ body.page-nine #app {
 #app * {
   /* If your Neil font looks too thin, change this to 500.
      Keeping 400 matches your old setup. */
-  font-weight: 500 !important;
+  font-weight: 700 !important;
 
   -webkit-text-stroke: 0.2px transparent;
   text-rendering: geometricPrecision;
