@@ -1,4 +1,4 @@
-/* styles.css — Neil font, original sizing/spacing (fits without scrolling)
+/* styles.css — ORIGINAL LAYOUT + Neil font + slight letter spacing
    FULL FILE — delete everything and paste this
 */
 
@@ -29,6 +29,8 @@ html, body {
 
   background: var(--bg);
   color: var(--fg);
+
+  /* ONLY change: use Neil */
   font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
 
   /* FORCE ALL CAPS */
@@ -164,14 +166,16 @@ html, body {
 }
 
 /* ====== PAGE 2: WORD LIST ====== */
-/* NOTE: keeping your original values so it fits like before */
 .scrollArea {
   max-height: 52vh;
-  overflow: auto; /* leaving as-is from your original; if you disable in JS, fine */
+  overflow: auto;
   width: 100%;
   margin-top: 16px;
 
+  /* iOS: smooth scrolling inside container */
   -webkit-overflow-scrolling: touch;
+
+  /* Prevent scroll chaining */
   overscroll-behavior: contain;
 }
 
@@ -236,7 +240,7 @@ body.page-nine #app {
 }
 
 .nineItem {
-  font-size: 32px;
+  font-size: 26px;
   color: white;
   padding: 14px 10px;
   text-align: center;
@@ -331,10 +335,17 @@ body.page-nine #app {
   padding: 0 20px;
 }
 
-/* CLEAN FONT RENDERING: no fake bold, no stroke (prevents weird glyphs like “B”) */
+/* Make handwriting less heavy on web (keep EXACT behavior from your original) */
 #app, #app * {
   font-weight: 400 !important;
-  text-rendering: optimizeLegibility;
+  -webkit-text-stroke: 0.2px transparent;
+  text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* ONLY addition: slight letter spacing (kept subtle so layout doesn't change much) */
+.title { letter-spacing: 0.06em; }
+.categoryText { letter-spacing: 0.05em; }
+.wordItem, .nineItem { letter-spacing: 0.04em; }
+.nextBtn, .shuffleBtn, .linkBtn { letter-spacing: 0.04em; }
