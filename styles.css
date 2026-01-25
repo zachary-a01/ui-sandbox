@@ -1,4 +1,4 @@
-/* styles.css — Neil font (clean, natural, spaced, readable)
+/* styles.css — Neil font (clean rendering, OLD page spacing restored)
    FULL FILE — delete everything and paste this
 */
 
@@ -49,10 +49,11 @@ body {
   box-sizing: border-box;
   text-transform: uppercase;
 
-  padding-top: calc(env(safe-area-inset-top) + 20px);
-  padding-left: calc(env(safe-area-inset-left) + 20px);
-  padding-right: calc(env(safe-area-inset-right) + 20px);
-  padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
+  /* ⬅️ RESTORED ORIGINAL PAGE PADDING */
+  padding-top: calc(env(safe-area-inset-top) + 18px);
+  padding-left: calc(env(safe-area-inset-left) + 18px);
+  padding-right: calc(env(safe-area-inset-right) + 18px);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 18px);
 
   max-width: 520px;
   margin: 0 auto;
@@ -95,9 +96,8 @@ body {
   content: "";
   display: block;
   height: 3px;
-  width: 180px;
   background: var(--line);
-  margin: 12px auto 0 auto;
+  margin: 10px auto 0 auto;
   border-radius: 999px;
 }
 
@@ -127,9 +127,9 @@ body {
    PAGE 1: CATEGORIES
    ========================= */
 .categoriesList {
-  margin-top: 48px;
+  margin-top: 40px;          /* ⬅️ restored */
   display: grid;
-  gap: 30px;
+  gap: 25px;                 /* ⬅️ restored */
   justify-items: center;
 }
 
@@ -142,14 +142,14 @@ body {
 .categoryText {
   font-size: 36px;
   letter-spacing: 0.07em;
-  line-height: 1.1;
+  line-height: 1;
 }
 
 .categoryUnderline {
-  width: 170px;
+  width: 150px;              /* ⬅️ restored */
   height: 3px;
   background: var(--line);
-  margin: 12px auto 0 auto;
+  margin: 10px auto 0 auto;
   border-radius: 999px;
 }
 
@@ -170,15 +170,15 @@ body {
   max-height: 52vh;
   overflow: auto;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 16px;          /* ⬅️ restored */
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
 }
 
 .wordsList {
-  margin-top: 14px;
+  margin-top: 10px;          /* ⬅️ restored */
   display: grid;
-  gap: 16px;
+  gap: 10px;                 /* ⬅️ restored */
   justify-items: center;
   padding-bottom: 10px;
 }
@@ -186,8 +186,8 @@ body {
 .wordItem {
   font-size: 36px;
   letter-spacing: 0.055em;
-  line-height: 1.25;
-  padding: 6px 10px;
+  line-height: 1.1;          /* ⬅️ restored */
+  padding: 6px 10px;         /* ⬅️ restored */
   text-align: center;
   cursor: pointer;
 }
@@ -202,14 +202,14 @@ body {
 .btnRow {
   display: flex;
   justify-content: center;
-  margin-top: 28px;
+  margin-top: 20px;          /* ⬅️ restored */
 }
 
 .nextBtn {
   font-size: 36px;
   letter-spacing: 0.06em;
-  padding: 18px 30px;
-  border-radius: 12px;
+  padding: 14px 26px;        /* ⬅️ restored */
+  border-radius: 10px;
   border: none;
   background: gray;
   color: white;
@@ -224,21 +224,21 @@ body {
    PAGE 3: NINE WORDS
    ========================= */
 body.page-nine #app {
-  padding-top: calc(env(safe-area-inset-top) + 70px);
+  padding-top: calc(env(safe-area-inset-top) + 60px); /* ⬅️ restored */
 }
 
 .nineList {
-  margin-top: 60px;
+  margin-top: 40px;          /* ⬅️ restored */
   display: grid;
-  gap: 14px;
+  gap: 0.5px;                /* ⬅️ restored */
   justify-items: stretch;
 }
 
 .nineItem {
   font-size: 32px;
   letter-spacing: 0.055em;
-  line-height: 1.3;
-  padding: 18px 10px;
+  line-height: 1.1;          /* ⬅️ restored */
+  padding: 14px 10px;        /* ⬅️ restored */
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
@@ -253,15 +253,15 @@ body.page-nine #app {
    SHUFFLE BUTTON
    ========================= */
 .shuffleRow {
-  margin-top: 20px;
-  padding-bottom: 60px;
+  margin-top: 10px;          /* ⬅️ restored */
+  padding-bottom: 50px;      /* ⬅️ restored */
 }
 
 .shuffleBtn {
   font-size: 28px;
   letter-spacing: 0.06em;
-  padding: 18px 30px;
-  border-radius: 12px;
+  padding: 14px 26px;        /* ⬅️ restored */
+  border-radius: 10px;
   border: 2px solid white;
   background: transparent;
   color: white;
@@ -298,15 +298,15 @@ body.page-nine #app {
 }
 
 .toggleRow input[type="checkbox"] {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
 }
 
 .linkBtn {
   margin-top: 50px;
   font-size: 36px;
   letter-spacing: 0.06em;
-  padding: 18px;
+  padding: 16px;
   background: transparent;
   border: none;
   color: white;
@@ -327,7 +327,7 @@ body.page-nine #app {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
 
 .teaserText {
