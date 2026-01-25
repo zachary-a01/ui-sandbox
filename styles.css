@@ -1,5 +1,5 @@
-/* styles.css — Neil font + slightly thicker + a bit more spacing + bigger text
-   FULL FILE: delete everything in styles.css and paste this.
+/* styles.css — Neil font (clean, natural, spaced, readable)
+   FULL FILE — delete everything and paste this
 */
 
 /* =========================
@@ -24,7 +24,7 @@
   --nextEnabled: rgb(0, 128, 0);
 }
 
-/* ====== GLOBAL: make the app feel native on iOS ====== */
+/* ====== GLOBAL ====== */
 html,
 body {
   height: 100%;
@@ -33,17 +33,11 @@ body {
 
   background: var(--bg);
   color: var(--fg);
-
-  /* Use Neil everywhere by default */
   font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
 
-  /* FORCE ALL CAPS */
   text-transform: uppercase;
-
-  /* Stop the whole page from scrolling/bouncing */
   overflow: hidden;
 
-  /* Reduce gesture weirdness */
   -webkit-text-size-adjust: 100%;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -53,25 +47,18 @@ body {
 #app {
   height: 100%;
   box-sizing: border-box;
-
-  /* FORCE ALL CAPS EVERYWHERE */
   text-transform: uppercase;
 
-  /* safe areas */
-  padding-top: calc(env(safe-area-inset-top) + 18px);
-  padding-left: calc(env(safe-area-inset-left) + 18px);
-  padding-right: calc(env(safe-area-inset-right) + 18px);
-  padding-bottom: calc(env(safe-area-inset-bottom) + 18px);
+  padding-top: calc(env(safe-area-inset-top) + 20px);
+  padding-left: calc(env(safe-area-inset-left) + 20px);
+  padding-right: calc(env(safe-area-inset-right) + 20px);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
 
-  /* iPhone width look */
   max-width: 520px;
   margin: 0 auto;
-
-  /* Important: app container does NOT scroll; only inner scroll areas do */
   overflow: hidden;
 }
 
-/* Absolute guarantee: EVERYTHING inside the app is caps */
 #app * {
   text-transform: uppercase;
 }
@@ -87,32 +74,36 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ====== HEADER ====== */
+/* =========================
+   HEADER
+   ========================= */
 .header {
   text-align: center;
   margin-top: 80px;
 }
 
 .title {
-  font-size: 44px; /* was 40 */
-  margin: 0;
+  font-size: 44px;
   line-height: 1;
+  letter-spacing: 0.08em;
+  margin: 0;
   display: inline-block;
   position: relative;
-  letter-spacing: 0.09em;
 }
 
-/* underline = text width */
 .title::after {
   content: "";
   display: block;
   height: 3px;
+  width: 180px;
   background: var(--line);
-  margin: 10px auto 0 auto;
+  margin: 12px auto 0 auto;
   border-radius: 999px;
 }
 
-/* ====== BACK BUTTON ====== */
+/* =========================
+   BACK BUTTON
+   ========================= */
 .backCircle {
   position: fixed;
   top: calc(env(safe-area-inset-top) + 14px);
@@ -130,14 +121,15 @@ body {
 .backCircle span {
   font-size: 30px;
   line-height: 1;
-  transform: translateX(-1px);
 }
 
-/* ====== PAGE 1: CATEGORIES ====== */
+/* =========================
+   PAGE 1: CATEGORIES
+   ========================= */
 .categoriesList {
-  margin-top: 40px;
+  margin-top: 48px;
   display: grid;
-  gap: 25px;
+  gap: 30px;
   justify-items: center;
 }
 
@@ -148,16 +140,16 @@ body {
 }
 
 .categoryText {
-  font-size: 36px; /* was 32 */
-  line-height: 1;
-  letter-spacing: 0.075em;
+  font-size: 36px;
+  letter-spacing: 0.07em;
+  line-height: 1.1;
 }
 
 .categoryUnderline {
-  width: 170px; /* was 150 */
+  width: 170px;
   height: 3px;
   background: var(--line);
-  margin: 10px auto 0 auto;
+  margin: 12px auto 0 auto;
   border-radius: 999px;
 }
 
@@ -171,118 +163,114 @@ body {
   opacity: 0.01;
 }
 
-/* ====== PAGE 2: WORD LIST ====== */
+/* =========================
+   PAGE 2: WORD LIST
+   ========================= */
 .scrollArea {
   max-height: 52vh;
   overflow: auto;
   width: 100%;
-  margin-top: 16px;
-
-  /* iOS: smooth scrolling inside container */
+  margin-top: 20px;
   -webkit-overflow-scrolling: touch;
-
-  /* Prevent scroll chaining */
   overscroll-behavior: contain;
 }
 
 .wordsList {
-  margin-top: 10px;
+  margin-top: 14px;
   display: grid;
-  gap: 10px;
+  gap: 16px;
   justify-items: center;
   padding-bottom: 10px;
 }
 
 .wordItem {
-  font-size: 36px; /* was 32 */
-  line-height: 1.1;
-  padding: 6px 10px;
-  cursor: pointer;
-  text-align: center;
-  color: var(--fg);
+  font-size: 36px;
   letter-spacing: 0.055em;
+  line-height: 1.25;
+  padding: 6px 10px;
+  text-align: center;
+  cursor: pointer;
 }
 
 .wordItem.selected {
   color: var(--greenSelect);
 }
 
-/* Next button */
+/* =========================
+   NEXT BUTTON
+   ========================= */
 .btnRow {
   display: flex;
   justify-content: center;
-  margin-top: 22px; /* was 20 */
+  margin-top: 28px;
 }
 
 .nextBtn {
-  font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
-  font-size: 36px; /* was 32 */
+  font-size: 36px;
   letter-spacing: 0.06em;
-  color: white;
-  padding: 16px 28px; /* slightly bigger */
-  border-radius: 10px;
+  padding: 18px 30px;
+  border-radius: 12px;
   border: none;
   background: gray;
+  color: white;
   cursor: pointer;
-}
-
-.nextBtn:disabled {
-  opacity: 1;
-  cursor: default;
 }
 
 .nextBtn:not(:disabled) {
   background: var(--nextEnabled);
 }
 
-/* ====== PAGE 3: NINE WORDS ====== */
+/* =========================
+   PAGE 3: NINE WORDS
+   ========================= */
 body.page-nine #app {
-  padding-top: calc(env(safe-area-inset-top) + 60px);
+  padding-top: calc(env(safe-area-inset-top) + 70px);
 }
 
 .nineList {
-  margin-top: 60px;              /* was 40 */
+  margin-top: 60px;
   display: grid;
-  gap: 8px;                      /* was 0.5px */
+  gap: 14px;
   justify-items: stretch;
 }
 
 .nineItem {
-  font-size: 30px;
+  font-size: 32px;
   letter-spacing: 0.055em;
-  line-height: 1.25;             /* NEW: adds vertical air */
-  color: white;
-  padding: 18px 10px;            /* was 16px */
+  line-height: 1.3;
+  padding: 18px 10px;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-
 .nineHighlight {
   color: var(--greenSelect);
 }
 
-/* Shuffle button */
+/* =========================
+   SHUFFLE BUTTON
+   ========================= */
 .shuffleRow {
-  margin-top: 10px;
-  padding-bottom: 50px;
+  margin-top: 20px;
+  padding-bottom: 60px;
 }
 
 .shuffleBtn {
-  font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
-  font-size: 28px; /* was 24 */
+  font-size: 28px;
   letter-spacing: 0.06em;
-  color: white;
-  padding: 16px 28px; /* slightly bigger */
-  border-radius: 10px;
+  padding: 18px 30px;
+  border-radius: 12px;
   border: 2px solid white;
   background: transparent;
+  color: white;
   cursor: pointer;
 }
 
-/* ====== SETTINGS ====== */
+/* =========================
+   SETTINGS
+   ========================= */
 .settingsWrap {
   padding-top: 50px;
   max-width: 520px;
@@ -290,10 +278,10 @@ body.page-nine #app {
 }
 
 .settingsTitle {
+  font-size: 36px;
   text-align: center;
-  font-size: 36px; /* was 32 */
   margin-top: 60px;
-  letter-spacing: 0.075em;
+  letter-spacing: 0.07em;
 }
 
 .toggleRow {
@@ -301,32 +289,27 @@ body.page-nine #app {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
   padding: 16px;
 }
 
 .toggleLabel {
-  font-size: 36px; /* was 32 */
-  color: white;
+  font-size: 36px;
   letter-spacing: 0.055em;
 }
 
 .toggleRow input[type="checkbox"] {
-  width: 30px; /* was 28 */
-  height: 30px; /* was 28 */
+  width: 30px;
+  height: 30px;
 }
 
 .linkBtn {
   margin-top: 50px;
-  display: block;
-  width: 100%;
-  font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
-  font-size: 36px; /* was 32 */
+  font-size: 36px;
   letter-spacing: 0.06em;
-  color: white;
-  padding: 18px; /* was 16 */
+  padding: 18px;
   background: transparent;
   border: none;
+  color: white;
   cursor: pointer;
   text-align: center;
 }
@@ -335,36 +318,32 @@ body.page-nine #app {
   height: 200px;
 }
 
-/* ====== TEASER ====== */
+/* =========================
+   TEASER
+   ========================= */
 .teaserWrap {
   min-height: 70vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .teaserText {
-  font-size: 36px; /* was 32 */
+  font-size: 36px;
   letter-spacing: 0.055em;
-  color: white;
   text-align: center;
   padding: 0 20px;
 }
 
 /* =========================
-   THICKER HANDWRITING LOOK
+   FONT RENDERING (CLEAN)
    ========================= */
 #app,
 #app * {
-  /* Slightly thicker everywhere without getting blobby */
-  font-weight: 600 !important;
-
-  /* Subtle stroke helps on iOS/Safari */
-  -webkit-text-stroke: 0.3px transparent;
-
-  text-rendering: geometricPrecision;
+  font-weight: 400 !important;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
