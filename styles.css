@@ -1,4 +1,6 @@
-/* styles.css — Neil font version (copy/paste whole file) */
+/* styles.css — Neil font + slightly thicker + a bit more spacing + bigger text
+   FULL FILE: delete everything in styles.css and paste this.
+*/
 
 /* =========================
    FONT: Neil Normal (local)
@@ -6,14 +8,10 @@
 @font-face {
   font-family: "NeilNormal";
   src: url("./neil.normal.ttf") format("truetype");
-  font-weight: 700;
+  font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
-
-/* Optional: if you do NOT have a bold Neil file, we still let the browser synthesize it.
-   If you later add a bold file, add another @font-face with font-weight: 700. */
-
 
 /* =========================
    THEME VARIABLES
@@ -96,11 +94,12 @@ body {
 }
 
 .title {
-  font-size: 40px;
+  font-size: 44px; /* was 40 */
   margin: 0;
   line-height: 1;
   display: inline-block;
   position: relative;
+  letter-spacing: 0.09em;
 }
 
 /* underline = text width */
@@ -149,12 +148,13 @@ body {
 }
 
 .categoryText {
-  font-size: 32px;
+  font-size: 36px; /* was 32 */
   line-height: 1;
+  letter-spacing: 0.075em;
 }
 
 .categoryUnderline {
-  width: 150px;
+  width: 170px; /* was 150 */
   height: 3px;
   background: var(--line);
   margin: 10px auto 0 auto;
@@ -194,12 +194,13 @@ body {
 }
 
 .wordItem {
-  font-size: 32px;
+  font-size: 36px; /* was 32 */
   line-height: 1.1;
   padding: 6px 10px;
   cursor: pointer;
   text-align: center;
   color: var(--fg);
+  letter-spacing: 0.055em;
 }
 
 .wordItem.selected {
@@ -210,14 +211,15 @@ body {
 .btnRow {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 22px; /* was 20 */
 }
 
 .nextBtn {
   font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
-  font-size: 32px;
+  font-size: 36px; /* was 32 */
+  letter-spacing: 0.06em;
   color: white;
-  padding: 14px 26px;
+  padding: 16px 28px; /* slightly bigger */
   border-radius: 10px;
   border: none;
   background: gray;
@@ -246,9 +248,10 @@ body.page-nine #app {
 }
 
 .nineItem {
-  font-size: 26px;
+  font-size: 30px; /* was 26 */
+  letter-spacing: 0.055em;
   color: white;
-  padding: 14px 10px;
+  padding: 16px 10px; /* slightly bigger */
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
@@ -267,9 +270,10 @@ body.page-nine #app {
 
 .shuffleBtn {
   font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
-  font-size: 24px;
+  font-size: 28px; /* was 24 */
+  letter-spacing: 0.06em;
   color: white;
-  padding: 14px 26px;
+  padding: 16px 28px; /* slightly bigger */
   border-radius: 10px;
   border: 2px solid white;
   background: transparent;
@@ -285,8 +289,9 @@ body.page-nine #app {
 
 .settingsTitle {
   text-align: center;
-  font-size: 32px;
+  font-size: 36px; /* was 32 */
   margin-top: 60px;
+  letter-spacing: 0.075em;
 }
 
 .toggleRow {
@@ -299,13 +304,14 @@ body.page-nine #app {
 }
 
 .toggleLabel {
-  font-size: 32px;
+  font-size: 36px; /* was 32 */
   color: white;
+  letter-spacing: 0.055em;
 }
 
 .toggleRow input[type="checkbox"] {
-  width: 28px;
-  height: 28px;
+  width: 30px; /* was 28 */
+  height: 30px; /* was 28 */
 }
 
 .linkBtn {
@@ -313,9 +319,10 @@ body.page-nine #app {
   display: block;
   width: 100%;
   font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
-  font-size: 32px;
+  font-size: 36px; /* was 32 */
+  letter-spacing: 0.06em;
   color: white;
-  padding: 16px;
+  padding: 18px; /* was 16 */
   background: transparent;
   border: none;
   cursor: pointer;
@@ -337,27 +344,25 @@ body.page-nine #app {
 }
 
 .teaserText {
-  font-size: 32px;
+  font-size: 36px; /* was 32 */
+  letter-spacing: 0.055em;
   color: white;
   text-align: center;
   padding: 0 20px;
 }
 
-/* Make handwriting less heavy on web */
+/* =========================
+   THICKER HANDWRITING LOOK
+   ========================= */
 #app,
 #app * {
-  /* If your Neil font looks too thin, change this to 500.
-     Keeping 400 matches your old setup. */
-  font-weight: 700 !important;
+  /* Slightly thicker everywhere without getting blobby */
+  font-weight: 600 !important;
 
-  -webkit-text-stroke: 0.2px transparent;
+  /* Subtle stroke helps on iOS/Safari */
+  -webkit-text-stroke: 0.3px transparent;
+
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-/* Neil font: add a little room between letters */
-.title { letter-spacing: 0.12em; }
-.categoryText { letter-spacing: 0.1em; }
-.wordItem, .nineItem { letter-spacing: 0.08em; }
-.nextBtn, .shuffleBtn, .linkBtn { letter-spacing: 0.08em; }
