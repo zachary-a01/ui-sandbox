@@ -241,22 +241,24 @@ body.page-nine #app {
 }
 
 .nineList {
-  margin-top: 40px;
+  margin-top: 60px;              /* was 40 */
   display: grid;
-  gap: 0.5px;
+  gap: 8px;                      /* was 0.5px */
   justify-items: stretch;
 }
 
 .nineItem {
-  font-size: 30px; /* was 26 */
+  font-size: 30px;
   letter-spacing: 0.055em;
+  line-height: 1.25;             /* NEW: adds vertical air */
   color: white;
-  padding: 16px 10px; /* slightly bigger */
+  padding: 18px 10px;            /* was 16px */
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 
 .nineHighlight {
   color: var(--greenSelect);
