@@ -1,6 +1,4 @@
-/* styles.css — ORIGINAL (baseline) + Neil font + page-2 shows more words (no weird B)
-   FULL FILE — delete everything and paste this
-*/
+/* styles.css — Neil font version (copy/paste whole file) */
 
 /* =========================
    FONT: Neil Normal (local)
@@ -13,16 +11,24 @@
   font-display: swap;
 }
 
+/* Optional: if you do NOT have a bold Neil file, we still let the browser synthesize it.
+   If you later add a bold file, add another @font-face with font-weight: 700. */
+
+
+/* =========================
+   THEME VARIABLES
+   ========================= */
 :root {
-  --bg: rgb(0,77,0);
+  --bg: rgb(0, 77, 0);
   --fg: #ffffff;
-  --line: rgba(255,255,255,0.85);
+  --line: rgba(255, 255, 255, 0.85);
   --greenSelect: #00ff66;
-  --nextEnabled: rgb(0,128,0);
+  --nextEnabled: rgb(0, 128, 0);
 }
 
 /* ====== GLOBAL: make the app feel native on iOS ====== */
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -30,7 +36,7 @@ html, body {
   background: var(--bg);
   color: var(--fg);
 
-  /* ONLY change from original: use Neil */
+  /* Use Neil everywhere by default */
   font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
 
   /* FORCE ALL CAPS */
@@ -115,8 +121,8 @@ html, body {
   width: 56px;
   height: 56px;
   border-radius: 999px;
-  background: rgba(0,0,0,0.18);
-  border: 2px solid rgba(255,255,255,0.15);
+  background: rgba(0, 0, 0, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.15);
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -166,14 +172,16 @@ html, body {
 }
 
 /* ====== PAGE 2: WORD LIST ====== */
-/* CHANGE #2 (only): allow enough height so you typically see ~9 words before NEXT */
 .scrollArea {
-  max-height: 68vh;        /* was 52vh */
-  overflow: hidden;        /* you said you don't want scrolling */
+  max-height: 52vh;
+  overflow: auto;
   width: 100%;
   margin-top: 16px;
 
+  /* iOS: smooth scrolling inside container */
   -webkit-overflow-scrolling: touch;
+
+  /* Prevent scroll chaining */
   overscroll-behavior: contain;
 }
 
@@ -314,7 +322,9 @@ body.page-nine #app {
   text-align: center;
 }
 
-.spacer { height: 200px; }
+.spacer {
+  height: 200px;
+}
 
 /* ====== TEASER ====== */
 .teaserWrap {
@@ -333,9 +343,13 @@ body.page-nine #app {
   padding: 0 20px;
 }
 
-/* Keep original “handwriting smoothing” behavior (but no forced bold) */
-#app, #app * {
+/* Make handwriting less heavy on web */
+#app,
+#app * {
+  /* If your Neil font looks too thin, change this to 500.
+     Keeping 400 matches your old setup. */
   font-weight: 400 !important;
+
   -webkit-text-stroke: 0.2px transparent;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
