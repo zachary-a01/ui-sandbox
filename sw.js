@@ -1,4 +1,7 @@
-const CACHE_NAME = "mindlister-cache-v3";
+// sw.js — cache setup for Mindlister (Neil font)
+// This version matches your repo filenames exactly (including neil.normal.ttf)
+
+const CACHE_NAME = "mindlister-cache-v4-neil";
 
 const ASSETS_TO_CACHE = [
   "./",
@@ -7,26 +10,38 @@ const ASSETS_TO_CACHE = [
   "./app.js",
   "./words.json",
   "./manifest.webmanifest",
+  "./robots.txt",
 
-  // Fonts (use whichever file you actually have)
-  "./BradleyHand.ttf",
-  "./BradleyHandBold.ttf"
+  // Icons / PWA assets that are in your root
+  "./favicon.ico",
+  "./apple-touch-icon.png",
+  "./web-app-manifest-192x192.png",
+  "./web-app-manifest-512x512.png",
+
+  // Font you actually have
+  "./neil.normal.ttf",
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE))
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+
+      // Force re-fetch during install so updated font/css actually replaces old cached copies
+      await cache.addAll(
+        ASSETS_TO_CACHE.map((url) => new Request(url, { cache: "reload" }))
+      );
+
+      await self.skipWaiting();
+    })()
   );
-  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     (async () => {
       const keys = await caches.keys();
-      await Promise.all(
-        keys.map((k) => (k === CACHE_NAME ? null : caches.delete(k)))
-      );
+      await Promise.all(keys.map((k) => (k === CACHE_NAME ? null : caches.delete(k))));
       await self.clients.claim();
     })()
   );
@@ -39,19 +54,26 @@ self.addEventListener("fetch", (event) => {
   // Only handle same-origin requests
   if (url.origin !== self.location.origin) return;
 
-  // For navigation (typing URL / refresh), serve cached index.html so the app still loads offline
+  // Navigation: network-first (so updates come through), fallback to cached index.html offline
   if (req.mode === "navigate") {
     event.respondWith(
       (async () => {
         const cache = await caches.open(CACHE_NAME);
-        const cached = await cache.match("./index.html");
-        return cached || fetch(req);
+        const cachedIndex = await cache.match("./index.html");
+
+        try {
+          const fresh = await fetch(req);
+          cache.put("./index.html", fresh.clone());
+          return fresh;
+        } catch {
+          return cachedIndex || new Response("Offline", { status: 503, statusText: "Offline" });
+        }
       })()
     );
     return;
   }
 
-  // Cache-first for everything else
+  // Everything else: cache-first, then network; cache new files as they are fetched
   event.respondWith(
     (async () => {
       const cached = await caches.match(req);
@@ -62,8 +84,7 @@ self.addEventListener("fetch", (event) => {
         const cache = await caches.open(CACHE_NAME);
         cache.put(req, fresh.clone());
         return fresh;
-      } catch (e) {
-        // If offline and not cached, just fail quietly
+      } catch {
         return new Response("", { status: 504, statusText: "Offline" });
       }
     })()
