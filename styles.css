@@ -1,27 +1,43 @@
+/* styles.css — Neil font version (copy/paste whole file) */
+
+/* =========================
+   FONT: Neil Normal (local)
+   ========================= */
 @font-face {
-  font-family: "BradleyHand";
-  src: url("./BradleyHandBold.ttf") format("truetype");
-  font-weight: 700;
+  font-family: "NeilNormal";
+  src: url("./neil.normal.ttf") format("truetype");
+  font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
+/* Optional: if you do NOT have a bold Neil file, we still let the browser synthesize it.
+   If you later add a bold file, add another @font-face with font-weight: 700. */
+
+
+/* =========================
+   THEME VARIABLES
+   ========================= */
 :root {
-  --bg: rgb(0,77,0);
+  --bg: rgb(0, 77, 0);
   --fg: #ffffff;
-  --line: rgba(255,255,255,0.85);
+  --line: rgba(255, 255, 255, 0.85);
   --greenSelect: #00ff66;
-  --nextEnabled: rgb(0,128,0);
+  --nextEnabled: rgb(0, 128, 0);
 }
 
 /* ====== GLOBAL: make the app feel native on iOS ====== */
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
 
   background: var(--bg);
   color: var(--fg);
-  font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
+
+  /* Use Neil everywhere by default */
+  font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
 
   /* FORCE ALL CAPS */
   text-transform: uppercase;
@@ -105,8 +121,8 @@ html, body {
   width: 56px;
   height: 56px;
   border-radius: 999px;
-  background: rgba(0,0,0,0.18);
-  border: 2px solid rgba(255,255,255,0.15);
+  background: rgba(0, 0, 0, 0.18);
+  border: 2px solid rgba(255, 255, 255, 0.15);
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -198,7 +214,7 @@ html, body {
 }
 
 .nextBtn {
-  font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
+  font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
   font-size: 32px;
   color: white;
   padding: 14px 26px;
@@ -250,7 +266,7 @@ body.page-nine #app {
 }
 
 .shuffleBtn {
-  font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
+  font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
   font-size: 24px;
   color: white;
   padding: 14px 26px;
@@ -296,7 +312,7 @@ body.page-nine #app {
   margin-top: 50px;
   display: block;
   width: 100%;
-  font-family: "BradleyHand", -apple-system, system-ui, sans-serif;
+  font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
   font-size: 32px;
   color: white;
   padding: 16px;
@@ -306,7 +322,9 @@ body.page-nine #app {
   text-align: center;
 }
 
-.spacer { height: 200px; }
+.spacer {
+  height: 200px;
+}
 
 /* ====== TEASER ====== */
 .teaserWrap {
@@ -326,8 +344,12 @@ body.page-nine #app {
 }
 
 /* Make handwriting less heavy on web */
-#app, #app * {
+#app,
+#app * {
+  /* If your Neil font looks too thin, change this to 500.
+     Keeping 400 matches your old setup. */
   font-weight: 400 !important;
+
   -webkit-text-stroke: 0.2px transparent;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
