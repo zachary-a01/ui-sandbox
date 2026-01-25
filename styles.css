@@ -357,7 +357,7 @@ body.page-nine #app {
 }
 
 /* Neil font: add a little room between letters */
-.title { letter-spacing: 0.1em; }
-.categoryText { letter-spacing: 0.08em; }
-.wordItem, .nineItem { letter-spacing: 0.06em; }
-.nextBtn, .shuffleBtn, .linkBtn { letter-spacing: 0.06em; }
+.title { letter-spacing: 0.12em; }
+.categoryText { letter-spacing: 0.1em; }
+.wordItem, .nineItem { letter-spacing: 0.08em; }
+.nextBtn, .shuffleBtn, .linkBtn { letter-spacing: 0.08em; }
