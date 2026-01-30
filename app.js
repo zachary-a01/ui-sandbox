@@ -1,6 +1,7 @@
 const app = document.getElementById("app");
 
-const APP_VERSION = "v2.0.0";
+// Change ONLY this when you update the app:
+const APP_VERSION = "v1.0.0";
 
 let wordData = {};
 let currentCategory = null;
@@ -333,6 +334,8 @@ function showSettings() {
       <button class="linkBtn" id="teaserBtn" type="button">Learn the secret here!</button>
 
       <div class="spacer"></div>
+
+      <div class="settingsVersion">${APP_VERSION}</div>
     </div>
   `;
 
@@ -357,7 +360,6 @@ function showTeaser() {
     <div class="teaserWrap">
       <div class="teaserText">Look for visual cues and expressions</div>
       <div class="teaserText">Good luck! :)</div>
-      <div class="teaserVersion">${APP_VERSION}</div>
     </div>
   `;
 
