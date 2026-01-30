@@ -1,7 +1,7 @@
 // sw.js — cache-busting PWA service worker
 // Bump CACHE_NAME every time you update files.
 
-const CACHE_NAME = "mindlister-cache-v1.0.1";
+
 
 const ASSETS = [
   "./",
