@@ -11,10 +11,6 @@
   font-display: swap;
 }
 
-/* Optional: if you do NOT have a bold Neil file, we still let the browser synthesize it.
-   If you later add a bold file, add another @font-face with font-weight: 700. */
-
-
 /* =========================
    THEME VARIABLES
    ========================= */
@@ -26,26 +22,17 @@
   --nextEnabled: rgb(0, 128, 0);
 }
 
-/* ====== GLOBAL: make the app feel native on iOS ====== */
+/* ====== GLOBAL ====== */
 html,
 body {
   height: 100%;
   margin: 0;
   padding: 0;
-
   background: var(--bg);
   color: var(--fg);
-
-  /* Use Neil everywhere by default */
   font-family: "NeilNormal", -apple-system, system-ui, sans-serif;
-
-  /* FORCE ALL CAPS */
   text-transform: uppercase;
-
-  /* Stop the whole page from scrolling/bouncing */
   overflow: hidden;
-
-  /* Reduce gesture weirdness */
   -webkit-text-size-adjust: 100%;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -55,25 +42,16 @@ body {
 #app {
   height: 100%;
   box-sizing: border-box;
-
-  /* FORCE ALL CAPS EVERYWHERE */
   text-transform: uppercase;
-
-  /* safe areas */
   padding-top: calc(env(safe-area-inset-top) + 18px);
   padding-left: calc(env(safe-area-inset-left) + 18px);
   padding-right: calc(env(safe-area-inset-right) + 18px);
   padding-bottom: calc(env(safe-area-inset-bottom) + 18px);
-
-  /* iPhone width look */
   max-width: 520px;
   margin: 0 auto;
-
-  /* Important: app container does NOT scroll; only inner scroll areas do */
   overflow: hidden;
 }
 
-/* Absolute guarantee: EVERYTHING inside the app is caps */
 #app * {
   text-transform: uppercase;
 }
@@ -103,7 +81,6 @@ body {
   position: relative;
 }
 
-/* underline = text width */
 .title::after {
   content: "";
   display: block;
@@ -177,11 +154,7 @@ body {
   overflow: auto;
   width: 100%;
   margin-top: 16px;
-
-  /* iOS: smooth scrolling inside container */
   -webkit-overflow-scrolling: touch;
-
-  /* Prevent scroll chaining */
   overscroll-behavior: contain;
 }
 
@@ -334,6 +307,7 @@ body.page-nine #app {
   justify-content: center;
   align-items: center;
   gap: 12px;
+  position: relative; /* needed for version positioning */
 }
 
 .teaserText {
@@ -343,13 +317,22 @@ body.page-nine #app {
   padding: 0 20px;
 }
 
-/* Make handwriting less heavy on web */
+/* ====== TEASER VERSION LABEL ====== */
+.teaserVersion {
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom) + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  opacity: 0.5;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+}
+
+/* ====== FONT RENDERING ====== */
 #app,
 #app * {
-  /* If your Neil font looks too thin, change this to 500.
-     Keeping 400 matches your old setup. */
   font-weight: 400 !important;
-
   -webkit-text-stroke: 0.2px transparent;
   text-rendering: geometricPrecision;
   -webkit-font-smoothing: antialiased;
