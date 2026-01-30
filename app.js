@@ -1,7 +1,7 @@
 const app = document.getElementById("app");
 
 // Change ONLY this when you update the app:
-const APP_VERSION = "v1.0.1";
+const APP_VERSION = "v1.0.0";
 
 let wordData = {};
 let currentCategory = null;
