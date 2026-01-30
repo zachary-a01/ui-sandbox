@@ -1,5 +1,7 @@
 const app = document.getElementById("app");
 
+const APP_VERSION = "v2.0.0";
+
 let wordData = {};
 let currentCategory = null;
 let selectedWord = null;
@@ -355,6 +357,7 @@ function showTeaser() {
     <div class="teaserWrap">
       <div class="teaserText">Look for visual cues and expressions</div>
       <div class="teaserText">Good luck! :)</div>
+      <div class="teaserVersion">${APP_VERSION}</div>
     </div>
   `;
 
