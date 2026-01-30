@@ -332,15 +332,17 @@ body.page-nine #app {
 
 /* ====== SETTINGS VERSION LABEL (BOTTOM CENTER) ====== */
 .settingsVersion {
-  position: absolute;
+  position: fixed;
   bottom: calc(env(safe-area-inset-bottom) + 12px);
   left: 50%;
   transform: translateX(-50%);
   font-size: 14px;
-  opacity: 0.5;
+  opacity: 0.55;
   letter-spacing: 0.08em;
   pointer-events: none;
+  z-index: 999999;
 }
+
 
 /* ====== TEASER ====== */
 .teaserWrap {
